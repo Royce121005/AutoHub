@@ -1,7 +1,7 @@
 # 🚗 AutoHub - Used Car Marketplace
 
 <p align="center">
-  <img src="screenshots/home.png" alt="AutoHub Home Page" width="100%">
+  <img src="Screenshots/Home.png" alt="AutoHub Home Page" width="100%">
 </p>
 
 <p align="center">
