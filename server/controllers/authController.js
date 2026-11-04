@@ -16,19 +16,20 @@ const generateToken = (id) => {
 const registerUser = async (req, res) => {
   try {
     const { name, email, phone, city, password } = req.body;
+    const cleanEmail = email ? email.trim().toLowerCase() : '';
 
     // Check if user already exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: cleanEmail });
     if (userExists) {
       return res.status(400).json({ success: false, message: 'User already exists with this email' });
     }
 
     // Create user
     const user = await User.create({
-      name,
-      email,
-      phone,
-      city,
+      name: name ? name.trim() : '',
+      email: cleanEmail,
+      phone: phone ? phone.trim() : '',
+      city: city ? city.trim() : '',
       password
     });
 
@@ -61,9 +62,10 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const cleanEmail = email ? email.trim().toLowerCase() : '';
 
     // Check for user
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: cleanEmail }).select('+password');
     if (!user) {
       return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }

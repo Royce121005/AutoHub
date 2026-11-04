@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { IoMailOutline, IoLockClosedOutline } from 'react-icons/io5';
+import { IoMailOutline, IoLockClosedOutline, IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
@@ -35,11 +36,26 @@ const Login = () => {
 
     setIsSubmitting(true);
     try {
-      await login(email, password);
+      await login(email.trim().toLowerCase(), password);
       navigate('/');
     } catch (err) {
       console.error(err);
       // AuthContext handles triggering the toast alert
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleQuickLogin = async (demoEmail, demoPassword) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setFormErrors({});
+    setIsSubmitting(true);
+    try {
+      await login(demoEmail, demoPassword);
+      navigate('/');
+    } catch (err) {
+      console.error(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -81,14 +97,34 @@ const Login = () => {
             <div className="input-with-icon">
               <IoLockClosedOutline className="input-icon" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 placeholder="••••••••"
                 className={`form-input ${formErrors.password ? 'error' : ''}`}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isSubmitting}
+                style={{ paddingRight: '42px' }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '14px',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted, #94a3b8)',
+                  cursor: 'pointer',
+                  fontSize: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: 0
+                }}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+              </button>
             </div>
             {formErrors.password && <span className="error-message">{formErrors.password}</span>}
           </div>
@@ -102,10 +138,7 @@ const Login = () => {
               type="button"
               className="auth-demo-btn"
               disabled={isSubmitting}
-              onClick={() => {
-                setEmail('dealer@autohub.com');
-                setPassword('password123');
-              }}
+              onClick={() => handleQuickLogin('dealer@autohub.com', 'password123')}
             >
               ⚡ Dealer Demo
             </button>
@@ -113,10 +146,7 @@ const Login = () => {
               type="button"
               className="auth-demo-btn"
               disabled={isSubmitting}
-              onClick={() => {
-                setEmail('rance@autohub.com');
-                setPassword('password123');
-              }}
+              onClick={() => handleQuickLogin('rance@autohub.com', 'password123')}
             >
               👤 Rance D'monte
             </button>
