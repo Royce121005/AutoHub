@@ -9,13 +9,13 @@ const ProtectedRoute = ({ children }) => {
     return (
       <div className="flex-center" style={{ minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
         <div className="spinner"></div>
-        <p>Verifying session details...</p>
+        <p>Connecting to AutoHub services...</p>
         <style>{`
           .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--accent-blue);
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--accent-blue, #3b82f6);
             border-radius: 50%;
             animation: spin 1s linear infinite;
           }

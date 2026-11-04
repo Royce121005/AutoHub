@@ -38,15 +38,22 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
     try {
-      const data = await api.get('/auth/profile');
+      const data = await api.get('/auth/profile', { signal: controller.signal });
+      clearTimeout(timeoutId);
       setUser(data.user);
       await fetchFavorites();
     } catch (err) {
-      console.error('Session validation failed:', err.message);
-      // Clear invalid credentials
-      localStorage.removeItem('token');
-      setUser(null);
+      clearTimeout(timeoutId);
+      console.warn('Session validation notice:', err.message);
+      // Only clear credentials on actual unauthorized (401) error, not on cold-start timeout
+      if (err.status === 401) {
+        localStorage.removeItem('token');
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }

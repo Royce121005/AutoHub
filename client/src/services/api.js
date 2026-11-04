@@ -18,10 +18,25 @@ const api = {
       delete headers['Content-Type'];
     }
 
-    const response = await fetch(`${this.baseURL}${endpoint}`, {
-      ...options,
-      headers
-    });
+    const controller = new AbortController();
+    const timeout = options.timeout || 35000;
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    let response;
+    try {
+      response = await fetch(`${this.baseURL}${endpoint}`, {
+        ...options,
+        signal: options.signal || controller.signal,
+        headers
+      });
+      clearTimeout(timeoutId);
+    } catch (fetchErr) {
+      clearTimeout(timeoutId);
+      if (fetchErr.name === 'AbortError') {
+        throw new Error('Server request timed out. Please retry in a moment.');
+      }
+      throw fetchErr;
+    }
 
     const data = await response.json();
 
