@@ -96,6 +96,31 @@ const Login = () => {
           <button type="submit" className="btn-primary auth-submit-btn" disabled={isSubmitting}>
             {isSubmitting ? 'Signing In...' : 'Sign In'}
           </button>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '10px' }}>
+            <button
+              type="button"
+              className="auth-demo-btn"
+              disabled={isSubmitting}
+              onClick={() => {
+                setEmail('dealer@autohub.com');
+                setPassword('password123');
+              }}
+            >
+              ⚡ Dealer Demo
+            </button>
+            <button
+              type="button"
+              className="auth-demo-btn"
+              disabled={isSubmitting}
+              onClick={() => {
+                setEmail('rance@autohub.com');
+                setPassword('password123');
+              }}
+            >
+              👤 Rance D'monte
+            </button>
+          </div>
         </form>
 
         <div className="auth-footer">
@@ -223,6 +248,25 @@ const Login = () => {
           width: 100%;
           padding: 0.85rem;
           margin-top: 10px;
+        }
+
+        .auth-demo-btn {
+          width: 100%;
+          padding: 0.75rem;
+          margin-top: 8px;
+          background: rgba(59, 130, 246, 0.1);
+          border: 1px dashed rgba(59, 130, 246, 0.4);
+          color: var(--accent-blue);
+          border-radius: var(--radius-md, 8px);
+          font-weight: 500;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .auth-demo-btn:hover {
+          background: rgba(59, 130, 246, 0.2);
+          border-color: var(--accent-blue);
         }
 
         .auth-footer {

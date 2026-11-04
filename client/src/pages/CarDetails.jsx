@@ -78,12 +78,19 @@ const CarDetails = () => {
     maximumFractionDigits: 0
   }).format(val);
 
+  const API_BASE = import.meta.env.VITE_API_URL 
+    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') 
+    : 'http://localhost:5000';
+  const FALLBACK_CAR_IMAGE = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop';
+
   // Format numbers
   const formatNum = (val) => new Intl.NumberFormat('en-IN').format(val);
 
   // Get image source
   const getImgSrc = (img) => {
-    return img.startsWith('/uploads') ? `http://localhost:5000${img}` : img;
+    if (!img) return FALLBACK_CAR_IMAGE;
+    if (img.startsWith('http://') || img.startsWith('https://')) return img;
+    return `${API_BASE}${img.startsWith('/') ? img : '/' + img}`;
   };
 
   const handleShareClick = () => {
@@ -115,7 +122,15 @@ const CarDetails = () => {
           {/* 1. Image Gallery */}
           <div className="gallery-card glass-card">
             <div className="active-image-frame">
-              <img src={activeImageUrl} alt={car.title} className="active-image" />
+              <img 
+                src={activeImageUrl} 
+                alt={car.title} 
+                className="active-image" 
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = FALLBACK_CAR_IMAGE;
+                }}
+              />
               
               {car.status === 'sold' && <div className="sold-overlay">SOLD</div>}
 
@@ -147,7 +162,14 @@ const CarDetails = () => {
                     className={`thumbnail-btn ${activeImageIndex === idx ? 'active' : ''}`}
                     onClick={() => setActiveImageIndex(idx)}
                   >
-                    <img src={getImgSrc(img)} alt={`Thumbnail ${idx + 1}`} />
+                    <img 
+                      src={getImgSrc(img)} 
+                      alt={`Thumbnail ${idx + 1}`} 
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = FALLBACK_CAR_IMAGE;
+                      }}
+                    />
                   </button>
                 ))}
               </div>

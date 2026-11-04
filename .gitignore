@@ -10,6 +10,11 @@ build/
 server/uploads/*
 !server/uploads/.gitkeep
 
+# Local database storage
+server/data/
+server/local-db/
+server/local-data/
+
 # Environment variables
 .env
 .env.local

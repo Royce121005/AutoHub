@@ -9,14 +9,14 @@ const path = require('path');
 const getCars = async (req, res) => {
   try {
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 9;
+    const limit = (req.query.sellerId && !req.query.limit) ? 100 : (parseInt(req.query.limit, 10) || 9);
     const skip = (page - 1) * limit;
 
     // Build filter query object
     let filter = {};
 
     // Defaults to only showing available cars, unless listing specific seller's cars
-    if (req.query.sellerId) {
+    if (req.query.sellerId && req.query.sellerId !== 'undefined' && req.query.sellerId !== 'null') {
       filter.sellerId = req.query.sellerId;
     } else {
       filter.status = 'available';
@@ -297,11 +297,122 @@ const markAsSold = async (req, res) => {
   }
 };
 
+// @desc    Seed sample listings for currently logged-in user
+// @route   POST /api/cars/seed-my-listings
+// @access  Private
+const seedUserListings = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const sampleCars = [
+      {
+        title: 'BMW M4 Competition Coupe',
+        brand: 'BMW',
+        model: 'M4',
+        variant: 'Competition 3.0L Twin-Turbo',
+        year: 2023,
+        price: 9200000,
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 8500,
+        color: 'Isle of Man Green',
+        registrationState: 'MH-01 (Mumbai South)',
+        insurance: 'Comprehensive',
+        description: 'Pristine 2023 BMW M4 Competition Coupe with carbon exterior package, M carbon bucket seats, laser headlights, and head-up display.',
+        images: [
+          'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?auto=format&fit=crop&w=1200&q=80',
+          'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: req.user.city || 'Mumbai',
+        status: 'available',
+        sellerId: userId
+      },
+      {
+        title: 'Mercedes-AMG G63 V8 Biturbo',
+        brand: 'Mercedes-Benz',
+        model: 'G-Class',
+        variant: 'AMG G63 4.0L V8',
+        year: 2022,
+        price: 24500000,
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 14000,
+        color: 'Obsidian Black Metallic',
+        registrationState: 'DL-01 (Delhi)',
+        insurance: 'Comprehensive',
+        description: 'Iconic Mercedes-AMG G63 featuring Night Package, 22-inch forged cross-spoke wheels, and Burmester sound system.',
+        images: [
+          'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: req.user.city || 'Delhi',
+        status: 'available',
+        sellerId: userId
+      },
+      {
+        title: 'Porsche Taycan 4S Electric',
+        brand: 'Porsche',
+        model: 'Taycan',
+        variant: '4S Performance Battery Plus',
+        year: 2021,
+        price: 13500000,
+        fuelType: 'Electric',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 16000,
+        color: 'Frozen Blue Metallic',
+        registrationState: 'MH-02 (Mumbai)',
+        insurance: 'Comprehensive',
+        description: 'High-performance all-electric Porsche Taycan 4S. 530 HP launch control, adaptive air suspension, passenger display, and sport chrono package.',
+        images: [
+          'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: req.user.city || 'Mumbai',
+        status: 'sold',
+        sellerId: userId
+      },
+      {
+        title: 'Audi RS5 Sportback Quattro',
+        brand: 'Audi',
+        model: 'RS5',
+        variant: '2.9L Twin-Turbo V6',
+        year: 2021,
+        price: 8800000,
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 18000,
+        color: 'Nardo Grey',
+        registrationState: 'MH-02 (Mumbai)',
+        insurance: 'Comprehensive',
+        description: 'Stunning Nardo Grey RS5 Sportback with RS dynamic package, Bang & Olufsen 3D sound, and panoramic sunroof.',
+        images: [
+          'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: req.user.city || 'Mumbai',
+        status: 'available',
+        sellerId: userId
+      }
+    ];
+
+    await Car.insertMany(sampleCars);
+    res.status(201).json({
+      success: true,
+      message: 'Sample listings seeded successfully for your account!',
+      count: sampleCars.length
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error seeding sample listings' });
+  }
+};
+
 module.exports = {
   getCars,
   getCarById,
   createCar,
   updateCar,
   deleteCar,
-  markAsSold
+  markAsSold,
+  seedUserListings
 };

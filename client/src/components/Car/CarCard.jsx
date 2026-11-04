@@ -21,16 +21,33 @@ const CarCard = ({ car, isOwnerCard = false, onEdit, onDelete, onToggleSold }) =
 
   const formattedKilometers = new Intl.NumberFormat('en-IN').format(car.kilometers);
 
+  const API_BASE = import.meta.env.VITE_API_URL 
+    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') 
+    : 'http://localhost:5000';
+  const FALLBACK_CAR_IMAGE = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=800&auto=format&fit=crop';
+
   // Parse server image paths correctly
-  const imageUrl = car.images && car.images.length > 0 
-    ? (car.images[0].startsWith('/uploads') ? `http://localhost:5000${car.images[0]}` : car.images[0])
-    : 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=600&auto=format&fit=crop';
+  const rawImage = car.images && car.images.length > 0 ? car.images[0] : null;
+  const imageUrl = rawImage
+    ? (rawImage.startsWith('http://') || rawImage.startsWith('https://')
+        ? rawImage
+        : `${API_BASE}${rawImage.startsWith('/') ? rawImage : '/' + rawImage}`)
+    : FALLBACK_CAR_IMAGE;
 
   return (
     <div className={`car-card glass-card ${car.status === 'sold' ? 'sold-listing' : ''}`}>
       {/* Listing Image */}
       <div className="card-image-wrapper" onClick={() => navigate(`/cars/${car._id}`)}>
-        <img src={imageUrl} alt={car.title} className="card-image" loading="lazy" />
+        <img 
+          src={imageUrl} 
+          alt={car.title} 
+          className="card-image" 
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = FALLBACK_CAR_IMAGE;
+          }}
+        />
         
         {/* Sold overlay badge */}
         {car.status === 'sold' && <div className="sold-badge">SOLD</div>}

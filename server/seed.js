@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const User = require('./models/User');
 const Car = require('./models/Car');
+const connectDB = require('./config/db');
 
 // Load environment variables
 dotenv.config();
@@ -23,7 +24,8 @@ const carsData = [
     insurance: 'Comprehensive',
     description: 'Immaculate condition Tesla Model 3 Performance. Dual motor all-wheel drive, 0-100 km/h in 3.3 seconds. Fully loaded with premium white interior, Autopilot enabled, 20-inch Uberturbine wheels, and carbon fiber spoiler. Single owner, always garage kept, and only supercharged a handful of times. Battery and drive unit warranty active until 2031.',
     images: [
-      'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1200&q=80'
     ],
     city: 'Mumbai',
     status: 'available'
@@ -44,7 +46,8 @@ const carsData = [
     insurance: 'Comprehensive',
     description: 'Looking to sell my BMW 330i M Sport. Complete service history at BMW authorized service centers. Features an active M Sport suspension, variable sport steering, sunroof, Live Cockpit Professional, and ambient lighting. No accidents, minor scratches on the rear bumper. Tires recently replaced with Michelin Pilot Sport 4S.',
     images: [
-      'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80'
     ],
     city: 'Delhi',
     status: 'available'
@@ -65,10 +68,11 @@ const carsData = [
     insurance: 'Comprehensive',
     description: 'Top-of-the-line Audi A4 Technology edition. Features Audi Virtual Cockpit, 3-zone climate control, panoramic glass sunroof, matrix LED headlights, and Bang & Olufsen 3D Premium Sound System. Excellent fuel economy with the mild-hybrid system. Looking for a quick sale as I am relocating abroad.',
     images: [
-      'https://images.unsplash.com/photo-1606577924046-27869c8d7f4c?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?auto=format&fit=crop&w=1200&q=80'
     ],
     city: 'Bangalore',
-    status: 'available'
+    status: 'sold'
   },
   {
     title: 'Ford Mustang GT V8 Fastback',
@@ -101,53 +105,53 @@ const carsData = [
     fuelType: 'Petrol',
     transmission: 'Automatic',
     owner: 'First',
-    kilometers: 42000,
-    color: 'Modern Steel Metallic',
-    registrationState: 'KA-03 (Bangalore)',
+    kilometers: 32000,
+    color: 'Platinum White Pearl',
+    registrationState: 'DL-01 (Delhi)',
     insurance: 'Comprehensive',
-    description: 'Perfect daily driver Honda Civic ZX (top variant). Equipped with LaneWatch camera, leather upholstery, 7-inch infotainment with Apple CarPlay/Android Auto, and full LED headlights. Unmatched comfort and handling stability. Serviced on schedule at Honda showrooms only. Highly reliable and great mileage.',
+    description: 'Executive sedan in immaculate condition. 10th generation Honda Civic ZX top trim. Includes lane watch camera, electric sunroof, dual-zone climate control, and digital cockpit display. Driven strictly within city limits, bumper-to-bumper genuine condition.',
     images: [
       'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
     ],
-    city: 'Bangalore',
+    city: 'Delhi',
     status: 'available'
   },
   {
     title: 'Hyundai Creta SX Plus',
     brand: 'Hyundai',
     model: 'Creta',
-    variant: 'SX Plus 1.6 CRDi',
-    year: 2019,
-    price: 1100000,
+    variant: 'SX Plus 1.5 Diesel AT',
+    year: 2021,
+    price: 1520000,
     fuelType: 'Diesel',
-    transmission: 'Manual',
+    transmission: 'Automatic',
     owner: 'First',
-    kilometers: 64000,
+    kilometers: 41000,
     color: 'Phantom Black',
-    registrationState: 'DL-08 (Delhi)',
-    insurance: 'Expired',
-    description: 'Reliable Hyundai Creta Diesel SUV. Extremely punchy and fuel-efficient 1.6L engine. Comes with wireless charging, projector headlights, keyless entry/start, and steering-mounted controls. Well maintained, perfect suspension for bumpy roads, and zero engine issues. Selling because we upgraded to a 7-seater.',
+    registrationState: 'KA-03 (Indiranagar)',
+    insurance: 'Comprehensive',
+    description: 'Popular compact SUV with outstanding mileage. Features a panoramic sunroof, ventilated front seats, Bose 8-speaker audio, and blue ambient lighting. Comprehensive insurance valid till Dec 2026. Non-accidental, non-flooded, verified service records.',
     images: [
       'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1200&q=80'
     ],
-    city: 'Delhi',
+    city: 'Bangalore',
     status: 'available'
   },
   {
     title: 'Toyota Fortuner 2.8L 4x4 Sigma 4',
     brand: 'Toyota',
     model: 'Fortuner',
-    variant: '2.8L 4x4 Automatic',
-    year: 2021,
-    price: 3800000,
+    variant: '2.8L 4x4 Sigma 4 Diesel AT',
+    year: 2022,
+    price: 3950000,
     fuelType: 'Diesel',
     transmission: 'Automatic',
     owner: 'First',
-    kilometers: 45000,
+    kilometers: 26000,
     color: 'Super White',
-    registrationState: 'MH-14 (Pune)',
+    registrationState: 'MH-04 (Thane)',
     insurance: 'Comprehensive',
-    description: 'Unbeatable reliability with this Toyota Fortuner 2.8L 4x4. Comes with massive road presence, active traction control, downhill assist, and a 11-speaker JBL audio system. Maintained strictly at Toyota authorized dealers with service logs. Used mostly for highway cruising.',
+    description: 'Indestructible Toyota Fortuner with 4x4 drivetrain and differential lock. 500 Nm torque diesel powertrain. Comes with genuine Toyota accessories including bull bar, side steps, and ceramic tint. Under official factory warranty till 2027.',
     images: [
       'https://images.unsplash.com/photo-1594568284297-7c64464062b1?auto=format&fit=crop&w=1200&q=80'
     ],
@@ -158,21 +162,21 @@ const carsData = [
     title: 'Land Rover Defender 110 HSE',
     brand: 'Land Rover',
     model: 'Defender',
-    variant: '110 HSE P300',
+    variant: '110 HSE 2.0L Turbo',
     year: 2022,
-    price: 9500000,
+    price: 9800000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
     owner: 'First',
-    kilometers: 15000,
-    color: 'Obsidian Black',
-    registrationState: 'MH-01 (Colaba)',
+    kilometers: 19000,
+    color: 'Pangea Green',
+    registrationState: 'DL-02 (New Delhi)',
     insurance: 'Comprehensive',
-    description: 'Adventure-ready Land Rover Defender 110 HSE. Features air suspension, 3D surround camera, sliding panoramic sunroof, and Pivi Pro infotainment system. Equipped with the explorer pack (roof rack and side gear carrier). Mint condition, single driver.',
+    description: 'Rugged luxury off-roader with air suspension, Terrain Response 2, Meridian audio system, panoramic roof, and 20-inch gloss black alloy wheels with all-terrain tires. Head-turner spec in rare Pangea Green with contrasting white roof.',
     images: [
       'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1200&q=80'
     ],
-    city: 'Mumbai',
+    city: 'Delhi',
     status: 'available'
   },
   {
@@ -189,12 +193,13 @@ const carsData = [
     color: 'Guards Red',
     registrationState: 'DL-01 (South Delhi)',
     insurance: 'Comprehensive',
-    description: 'Immaculate Porsche 911 Carrera S with 450 HP. Under complete Porsche warranty and service package. Equipped with Sport Chrono package, active suspension management, sports exhaust system, and 20/21-inch Carrera Classic wheels. PPF (Paint Protection Film) installed.',
+    description: 'Immaculate Porsche 911 Carrera S with 450 HP. Under complete Porsche warranty and service package. Equipped with Sport Chrono package, active suspension management, sports exhaust system, and 20/21-inch Carrera Classic wheels. PPF installed.',
     images: [
-      'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80'
     ],
     city: 'Delhi',
-    status: 'available'
+    status: 'sold'
   },
   {
     title: 'Tata Nexon EV Max XZ+ Lux',
@@ -206,32 +211,32 @@ const carsData = [
     fuelType: 'Electric',
     transmission: 'Automatic',
     owner: 'First',
-    kilometers: 18500,
-    color: 'Signature Blue',
-    registrationState: 'MH-03 (Chembur)',
+    kilometers: 21000,
+    color: 'Intensi-Teal',
+    registrationState: 'MH-14 (Pimpri)',
     insurance: 'Comprehensive',
-    description: 'Tata Nexon EV Max with 437 km ARAI certified range. Features ventilated seats, electronic parking brake with auto-hold, wireless charger, and air purifier. Comes with the home fast charger accessory. Excellent running costs and eco-friendly performance.',
+    description: 'Highest selling electric SUV in India. 437 km ARAI range on a single charge. Features electronic parking brake, ventilated front seats, wireless smartphone charger, and Harman 8-speaker sound system. Fast DC charger and home 7.2kW wall box included.',
     images: [
       'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1200&q=80'
     ],
     city: 'Mumbai',
-    status: 'available'
+    status: 'sold'
   },
   {
     title: 'Kia Seltos GTX Plus DCT',
     brand: 'Kia',
     model: 'Seltos',
-    variant: 'GTX Plus 1.4 T-GDi',
-    year: 2021,
-    price: 1680000,
+    variant: 'GTX Plus 1.4 Turbo DCT',
+    year: 2020,
+    price: 1380000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
     owner: 'First',
-    kilometers: 32000,
-    color: 'Gravity Grey',
-    registrationState: 'KA-01 (Bangalore Central)',
+    kilometers: 37000,
+    color: 'Glacier White Pearl',
+    registrationState: 'KA-04 (Yeshwanthpur)',
     insurance: 'Comprehensive',
-    description: 'Sporty Kia Seltos GTX Plus DCT with 1.4L turbo engine. Features a HUD (Head-Up Display), 360-degree camera, blind-spot monitoring, BOSE speaker system, and red styling accents. Zero insurance claims, single owner, and detailed showroom records.',
+    description: 'Sporty compact SUV with 1.4L Turbo engine producing 140 HP. Features heads-up display, 360-degree parking camera, Bose sound system, ventilated front seats, and UVO connected car capabilities. Well maintained with genuine periodic services.',
     images: [
       'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80'
     ],
@@ -243,16 +248,16 @@ const carsData = [
     brand: 'Mercedes-Benz',
     model: 'C-Class',
     variant: 'C200 Avantgarde',
-    year: 2022,
-    price: 4800000,
+    year: 2021,
+    price: 4350000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
     owner: 'First',
-    kilometers: 14000,
-    color: 'Iridium Silver',
-    registrationState: 'MH-47 (Mumbai North)',
+    kilometers: 16500,
+    color: 'Cavansite Blue',
+    registrationState: 'MH-01 (South Mumbai)',
     insurance: 'Comprehensive',
-    description: 'Elegant and sleek Mercedes-Benz C200 with mild-hybrid tech. Large central touchscreen display, active brake assist, memory seats, and panoramic sunroof. Under factory warranty. Drives like new, scratchless condition.',
+    description: 'Pristine Mercedes-Benz C200 with 64-color ambient lighting, panoramic sliding sunroof, digital instrument cluster, memory seating, and wireless phone charging. Single doctor-owned vehicle, always driven with chauffeur, spotless interior.',
     images: [
       'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1200&q=80'
     ],
@@ -275,7 +280,7 @@ const carsData = [
     insurance: 'Comprehensive',
     description: 'Fully loaded top-end Jeep Compass Model S. Features dual-pane panoramic sunroof, 10.1-inch infotainment, wireless charging, power tailgate, and 4x4 Select-Terrain system. Serviced on time at Jeep service centers, zero errors.',
     images: [
-      'https://images.unsplash.com/photo-1707010419358-d93cd77c5f8c?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'
     ],
     city: 'Bangalore',
     status: 'available'
@@ -299,23 +304,23 @@ const carsData = [
       'https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=1200&q=80'
     ],
     city: 'Delhi',
-    status: 'available'
+    status: 'sold'
   },
   {
     title: 'Toyota Camry Hybrid 2.5L',
     brand: 'Toyota',
     model: 'Camry',
-    variant: '2.5L Hybrid',
+    variant: 'Hybrid 2.5L AT',
     year: 2020,
-    price: 3200000,
+    price: 3600000,
     fuelType: 'Hybrid',
     transmission: 'Automatic',
     owner: 'First',
-    kilometers: 38000,
-    color: 'Silver Metallic',
-    registrationState: 'MH-04 (Thane)',
+    kilometers: 31000,
+    color: 'Burning Black',
+    registrationState: 'MH-03 (Kurla)',
     insurance: 'Comprehensive',
-    description: 'Luxury combined with ultimate fuel economy (22+ km/l) in this Toyota Camry Hybrid. Extremely quiet cabin, reclining rear seats, three-zone climate control, and premium audio. Ideal chauffeur-driven car. Meticulously maintained.',
+    description: 'Executive luxury hybrid sedan delivering supreme ride comfort and stellar 23+ km/l fuel efficiency. Includes reclining rear seats with rear armrest touch controls, ventilated seats, HUD, and 9-speaker JBL audio system.',
     images: [
       'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=1200&q=80'
     ],
@@ -338,7 +343,7 @@ const carsData = [
     insurance: 'Comprehensive',
     description: 'The safest 7-seater luxury SUV on the market. Volvo XC90 Inscription with Nappa leather seats, Bowers & Wilkins sound system, radar-based safety features, and massage seats. Immaculate condition inside and out.',
     images: [
-      'https://images.unsplash.com/photo-1623998021451-31d864197e41?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80'
     ],
     city: 'Bangalore',
     status: 'available'
@@ -369,13 +374,13 @@ const carsData = [
     brand: 'Hyundai',
     model: 'i20',
     variant: 'Asta (O) 1.0 Turbo DCT',
-    year: 2021,
-    price: 780000,
+    year: 2022,
+    price: 990000,
     fuelType: 'Petrol',
     transmission: 'Automatic',
     owner: 'First',
-    kilometers: 21000,
-    color: 'Polar White',
+    kilometers: 15000,
+    color: 'Fiery Red',
     registrationState: 'DL-09 (Rohini)',
     insurance: 'Comprehensive',
     description: 'Fun-to-drive premium hatchback with a 1.0L turbo-petrol engine and dual-clutch transmission. Features digital instrument cluster, sunroof, 10.25-inch touchscreen, Bose sound system, and blue ambient lighting. Under extended warranty.',
@@ -387,20 +392,19 @@ const carsData = [
   }
 ];
 
-const seedDatabase = async () => {
+const seedDatabase = async (exitOnFinish = true) => {
   try {
-    // 1. Connect to the database
     console.log('Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI);
+    await connectDB();
     console.log('Database connected successfully.');
 
-    // 2. Clear existing entries
-    console.log('Clearing existing cars and seed user...');
+    // 1. Clear existing cars
+    console.log('Clearing existing cars...');
     await Car.deleteMany({});
-    await User.deleteMany({ email: 'dealer@autohub.com' });
 
-    // 3. Create a Demo Seller Account
-    console.log('Creating demo seller...');
+    // 2. Clear & create Demo Seller Account (AutoHub Premier Dealer)
+    await User.deleteMany({ email: 'dealer@autohub.com' });
+    console.log('Creating demo dealer account...');
     const seller = new User({
       name: 'AutoHub Premier Dealer',
       email: 'dealer@autohub.com',
@@ -409,32 +413,181 @@ const seedDatabase = async () => {
       city: 'Mumbai',
       profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&h=150&q=80'
     });
-
     await seller.save();
     console.log(`Demo seller created with ID: ${seller._id}`);
 
-    // 4. Inject sellerId into cars data and save
-    console.log('Inserting sample car listings...');
+    // 3. Clear & create User Account for Rance D'monte
+    await User.deleteMany({ email: 'rance@autohub.com' });
+    console.log('Creating user account for Rance D\'monte...');
+    const ranceUser = new User({
+      name: 'Rance D\'monte',
+      email: 'rance@autohub.com',
+      password: 'password123',
+      phone: '+91 98765 11223',
+      city: 'Mumbai',
+      profileImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80'
+    });
+    await ranceUser.save();
+    console.log(`Rance user created with ID: ${ranceUser._id}`);
+
+    // 4. Seed listings for the Dealer (14 available, 4 sold)
+    console.log('Inserting dealer car listings...');
     const carsToInsert = carsData.map(car => ({
       ...car,
       sellerId: seller._id
     }));
-
     await Car.insertMany(carsToInsert);
-    console.log(`Successfully seeded ${carsToInsert.length} car listings!`);
 
-    // 5. Success summary
+    // 5. Seed listings for Rance D'monte & any other registered users
+    const personalCars = [
+      {
+        title: 'BMW M4 Competition Coupe',
+        brand: 'BMW',
+        model: 'M4',
+        variant: 'Competition 3.0L Twin-Turbo',
+        year: 2023,
+        price: 9200000,
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 8500,
+        color: 'Isle of Man Green',
+        registrationState: 'MH-01 (Mumbai South)',
+        insurance: 'Comprehensive',
+        description: 'Pristine 2023 BMW M4 Competition Coupe with carbon exterior package, M carbon bucket seats, laser headlights, and head-up display.',
+        images: [
+          'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?auto=format&fit=crop&w=1200&q=80',
+          'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: 'Mumbai',
+        status: 'available',
+        sellerId: ranceUser._id
+      },
+      {
+        title: 'Mercedes-AMG G63 V8 Biturbo',
+        brand: 'Mercedes-Benz',
+        model: 'G-Class',
+        variant: 'AMG G63 4.0L V8',
+        year: 2022,
+        price: 24500000,
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 14000,
+        color: 'Obsidian Black Metallic',
+        registrationState: 'DL-01 (Delhi)',
+        insurance: 'Comprehensive',
+        description: 'Iconic Mercedes-AMG G63 featuring Night Package, 22-inch forged cross-spoke wheels, and Burmester sound system.',
+        images: [
+          'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: 'Delhi',
+        status: 'available',
+        sellerId: ranceUser._id
+      },
+      {
+        title: 'Audi RS5 Sportback Quattro',
+        brand: 'Audi',
+        model: 'RS5',
+        variant: '2.9L Twin-Turbo V6',
+        year: 2021,
+        price: 8800000,
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 18000,
+        color: 'Nardo Grey',
+        registrationState: 'MH-02 (Mumbai)',
+        insurance: 'Comprehensive',
+        description: 'Stunning Nardo Grey RS5 Sportback with RS dynamic package, Bang & Olufsen 3D sound, and panoramic sunroof.',
+        images: [
+          'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: 'Mumbai',
+        status: 'available',
+        sellerId: ranceUser._id
+      },
+      {
+        title: 'Porsche Taycan 4S Electric',
+        brand: 'Porsche',
+        model: 'Taycan',
+        variant: '4S Performance Battery Plus',
+        year: 2021,
+        price: 13500000,
+        fuelType: 'Electric',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 16000,
+        color: 'Frozen Blue Metallic',
+        registrationState: 'MH-02 (Mumbai)',
+        insurance: 'Comprehensive',
+        description: 'High-performance all-electric Porsche Taycan 4S. 530 HP launch control, adaptive air suspension, passenger display, and sport chrono package.',
+        images: [
+          'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: 'Mumbai',
+        status: 'sold',
+        sellerId: ranceUser._id
+      },
+      {
+        title: 'Jeep Wrangler Rubicon 4x4',
+        brand: 'Jeep',
+        model: 'Wrangler',
+        variant: 'Rubicon 2.0L Turbo',
+        year: 2021,
+        price: 5800000,
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        owner: 'First',
+        kilometers: 22000,
+        color: 'Firecracker Red',
+        registrationState: 'MH-01 (Mumbai)',
+        insurance: 'Comprehensive',
+        description: 'Ultimate off-roader with Rock-Trac 4x4, Tru-Lok front and rear locking differentials, and removable hardtop roof.',
+        images: [
+          'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'
+        ],
+        city: 'Mumbai',
+        status: 'sold',
+        sellerId: ranceUser._id
+      }
+    ];
+
+    await Car.insertMany(personalCars);
+
+    // Also populate any other existing users in DB if they have 0 cars
+    const otherUsers = await User.find({ _id: { $nin: [seller._id, ranceUser._id] } });
+    for (const u of otherUsers) {
+      const userCars = personalCars.map(c => ({
+        ...c,
+        _id: new mongoose.Types.ObjectId(),
+        sellerId: u._id
+      }));
+      await Car.insertMany(userCars);
+      console.log(`Seeded ${userCars.length} sample listings for user: ${u.name} (${u.email})`);
+    }
+
     console.log('\n--- Seeding Completed Successfully ---');
-    console.log('Demo Login Credentials for Testing:');
-    console.log('Email: dealer@autohub.com');
-    console.log('Password: password123');
+    console.log('Demo Login Accounts:');
+    console.log('1. AutoHub Premier Dealer: dealer@autohub.com / password123 (18 listings: 14 available, 4 sold)');
+    console.log('2. Rance D\'monte:          rance@autohub.com  / password123 (5 listings: 3 available, 2 sold)');
     console.log('------------------------------------');
 
-    process.exit(0);
+    if (exitOnFinish) {
+      process.exit(0);
+    }
+    return true;
   } catch (error) {
     console.error('Error seeding database:', error.message);
-    process.exit(1);
+    if (exitOnFinish) {
+      process.exit(1);
+    }
+    throw error;
   }
 };
 
-seedDatabase();
+if (require.main === module) {
+  seedDatabase(true);
+}
+
+module.exports = { seedDatabase, carsData };

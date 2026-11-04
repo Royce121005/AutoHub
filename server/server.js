@@ -10,7 +10,23 @@ const connectDB = require('./config/db');
 dotenv.config();
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(async () => {
+  try {
+    const Car = require('./models/Car');
+    const count = await Car.countDocuments();
+    if (count === 0) {
+      console.log('Database empty on startup. Automatically seeding initial demo listings...');
+      const { seedDatabase } = require('./seed');
+      if (typeof seedDatabase === 'function') {
+        await seedDatabase(false);
+      }
+    }
+  } catch (seedErr) {
+    console.warn('Auto-seed check notice:', seedErr.message);
+  }
+}).catch(err => {
+  console.warn('DB connection startup notice:', err.message);
+});
 
 const app = express();
 

@@ -18,18 +18,37 @@ const MyListings = () => {
   // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [carToDelete, setCarToDelete] = useState(null);
+  const [isSeeding, setIsSeeding] = useState(false);
 
   const fetchMyListings = async () => {
-    if (!user) return;
+    const userId = user?.id || user?._id;
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const data = await api.get(`/cars?sellerId=${user.id}`);
-      setListings(data.cars);
+      const data = await api.get(`/cars?sellerId=${userId}&limit=100`);
+      setListings(data.cars || []);
     } catch (err) {
       console.error(err);
       toast.error('Failed to load your listings');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSeedSampleListings = async () => {
+    setIsSeeding(true);
+    try {
+      const res = await api.post('/cars/seed-my-listings');
+      toast.success(res.message || 'Sample vehicles added to your listings!');
+      await fetchMyListings();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || 'Failed to seed sample listings');
+    } finally {
+      setIsSeeding(false);
     }
   };
 
@@ -94,9 +113,20 @@ const MyListings = () => {
           <h2>My Vehicle Listings</h2>
           <p>Manage, edit, or update availability of your uploaded cars.</p>
         </div>
-        <Link to="/sell" className="btn-primary add-listing-btn">
-          <IoAddCircleOutline /> Add New Listing
-        </Link>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button 
+            type="button" 
+            className="btn-secondary add-listing-btn"
+            onClick={handleSeedSampleListings}
+            disabled={isSeeding}
+            style={{ fontSize: '0.88rem' }}
+          >
+            {isSeeding ? 'Adding...' : '✨ Add Sample Vehicles'}
+          </button>
+          <Link to="/sell" className="btn-primary add-listing-btn">
+            <IoAddCircleOutline /> Add New Listing
+          </Link>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -137,7 +167,18 @@ const MyListings = () => {
             }
           </p>
           {activeTab === 'all' && (
-            <Link to="/sell" className="btn-primary">Sell Your Car Now</Link>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '10px' }}>
+              <Link to="/sell" className="btn-primary">Sell Your Car Now</Link>
+              <button 
+                type="button" 
+                className="btn-secondary"
+                onClick={handleSeedSampleListings}
+                disabled={isSeeding}
+                style={{ padding: '0.75rem 1.25rem' }}
+              >
+                {isSeeding ? 'Seeding...' : '✨ Seed Sample Vehicles in My Listings'}
+              </button>
+            </div>
           )}
         </div>
       ) : (

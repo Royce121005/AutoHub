@@ -6,7 +6,8 @@ const {
   createCar,
   updateCar,
   deleteCar,
-  markAsSold
+  markAsSold,
+  seedUserListings
 } = require('../controllers/carController');
 const { protect } = require('../middleware/auth');
 const { uploadCarImages } = require('../middleware/upload');
@@ -14,6 +15,7 @@ const { carValidator } = require('../middleware/validator');
 
 // Public routes
 router.get('/', getCars);
+router.post('/seed-my-listings', protect, seedUserListings);
 router.get('/:id', getCarById);
 
 // Protected routes
